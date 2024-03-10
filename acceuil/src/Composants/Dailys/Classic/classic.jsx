@@ -48,12 +48,14 @@ export const Classic = () => {
                     <React.Fragment key={index}>{div}</React.Fragment>
                 ))}
             </div>
-            <input
-                type="text"
-                placeholder="Nom du Pokémon"
-                value={pokemonName}
-                onChange={handleInputChange}
-            />
+            <div className='inputPokemon'>
+                <input
+                    type="text"
+                    placeholder="Nom du Pokémon"
+                    value={pokemonName}
+                    onChange={handleInputChange}
+                />
+            </div>
         </div>
     );
 };

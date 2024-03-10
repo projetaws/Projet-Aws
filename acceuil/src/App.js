@@ -1,4 +1,4 @@
-import Classic from './Composants/Dailys/Classic/classic';
+import Classic from './Composants/Dailys/Classic/test';
 {/*import BrowsingRoutes from './BrowsingRoutes';*/}
 
 function App() {

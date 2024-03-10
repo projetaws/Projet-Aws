@@ -28,17 +28,27 @@ body {
 }
 
 .div-container {
-    width: 930px; /* Largeur fixe de la div */
+    width: 930px;
     height: 500px;
-    margin-top: 10px; /* Espacement entre les divs */
-    position: absolute; /* Utilise une position absolue par rapport à classic-container */
-    top: 180px; /* Ajustez la position verticale selon vos besoins */
-    left: 25px; /* Ajustez la position horizontale selon vos besoins */
-}
-
-.dynamic-div {
+    margin-top: 80px;
+    margin-right: 310px;
+    position: relative; /* Changez de position absolue à relative */
+    overflow-y: auto;
+  }
+  
+  .dynamic-div {
     background-color: #3498db;
     color: #ffffff;
     padding: 10px;
     margin-bottom: 5px;
-}
+  }
+  
+  .inputPokemonContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    position: absolute; /* Gardez une position absolue */
+    bottom: 10px; /* Ajustez la position verticale selon vos besoins */
+  }
+
