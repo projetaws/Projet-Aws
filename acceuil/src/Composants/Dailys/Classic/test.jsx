@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './classic.css';
 import pokemonNames from '../../assets/datas/FR_EN_PokeDict.json';
+import pokedexraw from '../../assets/RawPokedex.svg';
 
 function Test() {
   const [pokemonName, setPokemonName] = useState('');
@@ -63,7 +64,13 @@ function Test() {
     } else if (pokemonId <= 898) {
       return 8;
     } else {
-        return 9;
+      return 9;
+    }
+  };
+
+  const handleInputKeyDown = async (event) => {
+    if (event.key === 'Enter') {
+      await handleInputSubmit();
     }
   };
 
@@ -102,7 +109,7 @@ function Test() {
   };
 
   return (
-    <div className="classic-container">
+    <div className="classic-container"> 
       <div className='div-container'>
         {pokemonDataList.map((pokemonData, index) => (
           <div key={index} className="dynamic-div">
@@ -116,20 +123,26 @@ function Test() {
           </div>
         ))}
       </div>
+      <img
+        src={pokedexraw}
+        alt="pokedex"
+        width="300"
+        height="200"
+      />
       
       <div className='inputPokemonContainer'>
-        <div className='inputPokemon'>
-          <input
-            type="text"
-            placeholder="Nom du Pokémon"
-            value={pokemonName}
-            onChange={handleInputChange}
-          />
-        </div>
-        <button onClick={handleInputSubmit}>Valider</button>
+        <input className='inputPokemon'
+          type="text"
+          placeholder="Nom du Pokémon"
+          value={pokemonName}
+          onChange={handleInputChange}
+          onKeyDown={handleInputKeyDown}
+        />
       </div>
+      <div></div>
     </div>
   );
 }
 
 export default Test;
+
