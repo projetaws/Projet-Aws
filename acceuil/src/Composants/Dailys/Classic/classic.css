@@ -44,13 +44,37 @@ body {
   overflow-y: auto;
   z-index: 1;
 }
+
 .dynamic-div {
-  background-color: #3498db;
-  color: #ffffff;
+  background-color: #FFCC01;
+  border-radius: 20px; /* Ajoutez cette ligne pour arrondir les angles */
   padding: 10px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row; /* Aligner les éléments horizontalement */
+  justify-content: space-evenly; /* Espacez les éléments également sur l'axe principal */
 }
-  
+
+.dynamic-div p {
+  background-color: #ffffff; /* Fond blanc */
+  border: 2px solid #000000; /* Bordure noire */
+  min-height: 50px;
+  height: 50px; /* Hauteur fixe */
+  min-width: 50px;
+  width: 50px;
+  border-radius: 10px; /* Coins arrondis */
+  padding: 10px;
+  color: #000000; /* Couleur du texte */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px; /* Espacement entre les éléments */
+}
+
+.dynamic-div p + p {
+  margin-left: 10px;
+} 
+
 .inputPokemonContainer {
   width: 53.6%;
   left: 14%;
