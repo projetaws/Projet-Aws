@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './classic.css';
+
 
 export const Classic = () => {
     const [divList, setDivList] = useState([]);

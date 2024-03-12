@@ -7,20 +7,41 @@ import pokedexraw from '../../assets/RawPokedex.svg';
 function Test() {
   const [pokemonName, setPokemonName] = useState('');
   const [pokemonDataList, setPokemonDataList] = useState([]);
+  const [dailyPokemon, setDailyPokemon] = useState(null);
+  const [comparisonResults, setComparisonResults] = useState({
+    isEqualName: false,
+    isEqualType1: false,
+    isEqualType2: false,
+    isEqualHabitat: false,
+    isEqualColors: false,
+    isEqualEvolutionStage: false,
+    isEqualHeight: false,
+    isEqualWeight: false,
+    isEqualGeneration: false,
+  });
 
-  const getRandomPokemon = (pokemonNames) => {
+  const getRandomPokemon = async () => {
     const pokemonKeys = Object.keys(pokemonNames);
     const randomKey = pokemonKeys[Math.floor(Math.random() * pokemonKeys.length)];
-    const randomPokemon = {
-      frenchName: randomKey,
-      englishName: pokemonNames[randomKey],
-    };
-    console.log(randomPokemon.frenchName)
+    console.log(randomKey);
+    const randomPokemon = await getPokemon(pokemonNames[randomKey]);
     return randomPokemon;
   };
 
-  const dailyPokemon = getRandomPokemon(pokemonNames);
-  console.log(dailyPokemon)
+  const getLastDailyPokemonDate = () => {
+    return localStorage.getItem('lastDailyPokemonDate');
+  };
+
+  const setLastDailyPokemonDate = () => {
+    const currentDate = new Date().toISOString();
+    localStorage.setItem('lastDailyPokemonDate', currentDate);
+  };
+
+  const handleGenerateRandomPokemon = async () => {
+    const newDailyPokemon = await getRandomPokemon();
+    setDailyPokemon(newDailyPokemon);
+    setLastDailyPokemonDate();
+  };
 
   const handleInputChange = (event) => {
     setPokemonName(event.target.value);
@@ -40,19 +61,21 @@ function Test() {
     }
   };
 
-  const getHabitatNameInFrench = async (habitatName) => {
+  const getHabitatName = async (speciesDetails) => {
     try {
-      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-habitat/${habitatName}`);
+      const englishHabitat = speciesDetails.data.habitat ? speciesDetails.data.habitat.name : 'Inconnu';
+      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-habitat/${englishHabitat}`);
       return response.data.names.find((name) => name.language.name === 'fr').name;
     } catch (error) {
-      console.error('Erreur lors de la récupération du nom français de l\'habitat :', error.message);
+      console.error('Erreur lors de la récupération du nom français de l\'pokemonHabitat :', error.message);
       return 'Inconnu';
     }
   };
 
-  const getColorNameInFrench = async (colorName) => {
+  const getColorName = async (speciesDetails) => {
     try {
-      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-color/${colorName}`);
+      const englishColor = speciesDetails.data.color.name;
+      const response = await axios.get(`https://pokeapi.co/api/v2/pokemon-color/${englishColor}`);
       return response.data.names.find((name) => name.language.name === 'fr').name;
     } catch (error) {
       console.error('Erreur lors de la récupération du nom français de la couleur :', error.message);
@@ -60,32 +83,31 @@ function Test() {
     }
   };
 
-  const getEvolutionChain = async (species) => {
+  const getEvolutionStage = async (species) => {
     try {
       const evolutionChainUrl = species.data.evolution_chain.url;
-      
+
       const evolutionChainResponse = await axios.get(evolutionChainUrl);
       let evolv_stage = 1;
-      
+
       // Fonction récursive pour calculer le stade d'évolution
       const calculateEvolutionStage = (chain) => {
-        console.log(chain.evolves_to && chain.evolves_to.length > 0);
         if (chain.species.name !== species.data.name) {
           evolv_stage += 1;
         } else {
           return evolv_stage;
         }
-  
+
         if (chain.evolves_to && chain.evolves_to.length > 0) {
           chain.evolves_to.forEach((evolution) => {
             calculateEvolutionStage(evolution);
           });
         }
       };
-  
+
       // Appel initial de la fonction pour démarrer le processus
       calculateEvolutionStage(evolutionChainResponse.data.chain);
-  
+
       return evolv_stage;
     } catch (error) {
       console.error('Erreur lors de la récupération de la chaîne d\'évolution :', error.message);
@@ -121,41 +143,104 @@ function Test() {
     }
   };
 
+  const getPokemonDetails = async (pokemonEnglishName) => {
+    return await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemonEnglishName.toLowerCase()}`);
+  }
+
+  const getPokemonSprite = (pokemonDetails) => {
+    return pokemonDetails.data.sprites.front_default;
+  }
+
+  const getPokemonSpecies = async (pokemonDetails) => {
+    return await axios.get(pokemonDetails.data.species.url);
+  }
+
+  const getPokemonTypes = async (pokemonDetails) => {
+    return await Promise.all(pokemonDetails.data.types.map(async (type) => await getTypeNameInFrench(type.type.name)));
+  }
+
+  const getPokemonHeight = (pokemonDetails) => {
+    return pokemonDetails.data.height;
+  }
+
+  const getPokemonWeight = (pokemonDetails) => {
+    return pokemonDetails.data.weight;
+  }
+
+  const getPokemonId = (pokemonDetails) => {
+    return pokemonDetails.data.id;
+  }
+
+  const getPokemon = async (pokemonName) => {
+
+    // Récupération des informations général du pokémon (cf. doc PokeAPI)
+    const pokemonDetails = await getPokemonDetails(pokemonName);
+
+    // Récupération des informations sur l'espèce du Pokemon (cf. doc PokeAPI)
+    const speciesDetails = await getPokemonSpecies(pokemonDetails);
+
+    // Récupération des éléments à afficher, nécéssaires au jeu
+
+    const pokemonSprite = getPokemonSprite(pokemonDetails);
+    const pokemonTypes = await getPokemonTypes(pokemonDetails);
+    const pokemonHabitat = await getHabitatName(speciesDetails);
+    const pokemonColor = await getColorName(speciesDetails);
+    const evolutionStage = await getEvolutionStage(speciesDetails);
+    const height = getPokemonHeight(pokemonDetails);
+    const weight = getPokemonWeight(pokemonDetails);
+    const pokemonId = getPokemonId(pokemonDetails);
+    const generation = getGenerationByPokemonId(pokemonId);
+    const newPokemonData = {
+      name: pokemonName,
+      pokemonSprite: pokemonSprite,
+      pokemonTypes: pokemonTypes,
+      pokemonHabitat: pokemonHabitat,
+      colors: pokemonColor,
+      height: height,
+      weight: weight,
+      evolutionStage: evolutionStage,
+      generation: generation,
+    };
+
+    return newPokemonData;
+  }
+
   const handleInputSubmit = async () => {
     if (pokemonName.trim() !== '') {
       try {
-        const englishName = getEnglishPokemonName(pokemonName);
-        const pokemonDetailsResponse = await axios.get(`https://pokeapi.co/api/v2/pokemon/${englishName.toLowerCase()}`);
+        // Récupération du nom du pokémon en Anglais pour L'API
+        const pokemonEnglishName = getEnglishPokemonName(pokemonName);
 
-        const sprite = pokemonDetailsResponse.data.sprites.front_default;
+        // Récupérer le pokémon saisi par l'utilisateur
+        const userPokemonData = await getPokemon(pokemonEnglishName);
 
-        const speciesResponse = await axios.get(pokemonDetailsResponse.data.species.url);
+        // Comparaison des informations
+        const isEqualName = userPokemonData.name.toLowerCase() === dailyPokemon.name.toLowerCase();
+        const isEqualType1 = userPokemonData.pokemonTypes[0] === dailyPokemon.pokemonTypes[0];
+        const isEqualType2 = (userPokemonData.pokemonTypes[1] || 'Aucun') === (dailyPokemon.pokemonTypes[1] || 'Aucun');
+        const isEqualHabitat = userPokemonData.pokemonHabitat === dailyPokemon.pokemonHabitat;
+        const isEqualColors = userPokemonData.colors === dailyPokemon.colors;
+        const isEqualEvolutionStage = userPokemonData.evolutionStage === dailyPokemon.evolutionStage;
+        const isEqualHeight = userPokemonData.height === dailyPokemon.height;
+        const isEqualWeight = userPokemonData.weight === dailyPokemon.weight;
+        const isEqualGeneration = userPokemonData.generation === dailyPokemon.generation;
 
-        const types = await Promise.all(pokemonDetailsResponse.data.types.map(async (type) => await getTypeNameInFrench(type.type.name)));
-        const habitatInFrench = await getHabitatNameInFrench(speciesResponse.data.habitat ? speciesResponse.data.habitat.name : 'Inconnu');
-        const colorsInFrench = await getColorNameInFrench(speciesResponse.data.color.name);
-        console.log(speciesResponse.data.name)
+        // Mise à jour de l'état avec les résultats de la comparaison
+        setComparisonResults({
+          isEqualName,
+          isEqualType1,
+          isEqualType2,
+          isEqualHabitat,
+          isEqualColors,
+          isEqualEvolutionStage,
+          isEqualHeight,
+          isEqualWeight,
+          isEqualGeneration,
+        });
 
-        const height = pokemonDetailsResponse.data.height;
-        const weight = pokemonDetailsResponse.data.weight;
-        const pokemonId = pokemonDetailsResponse.data.id;
-        const generation = getGenerationByPokemonId(pokemonId);
-        const evolutionChain = await getEvolutionChain(speciesResponse);
-
-        const newPokemonData = {
-          name: pokemonName,
-          sprite: sprite,
-          types: types,
-          habitat: habitatInFrench,
-          colors: colorsInFrench,
-          height: height,
-          weight: weight,
-          evolutionChain : evolutionChain,
-          generation: generation,
-        };
 
         // Créez une nouvelle copie du tableau avec le nouvel élément au début
-        const updatedList = [newPokemonData, ...pokemonDataList];
+        const updatedList = [userPokemonData, ...pokemonDataList];
 
         // Mettez à jour l'état avec la nouvelle copie du tableau
         setPokemonDataList(updatedList);
@@ -168,20 +253,36 @@ function Test() {
   };
 
   return (
-    <div className="classic-container"> 
+    <div className="classic-container">
       <div className='div-container'>
         {pokemonDataList.map((pokemonData, index) => (
           <div key={index} className="dynamic-div">
-            <p><img src={pokemonData.sprite} alt={pokemonData.name} 
-                style={{ width: '300px', height: '300px' }} /></p>
-            <p>{pokemonData.types[0]}</p>
-            <p>{pokemonData.types[1] || 'Aucun'}</p>
-            <p>{pokemonData.habitat}</p>
-            <p>{pokemonData.colors}</p>
-            <p>{pokemonData.evolutionChain}</p>
-            <p>{pokemonData.height * 10} cm</p>
-            <p>{pokemonData.weight / 10} kg</p>
-            <p>{pokemonData.generation}</p>
+            <p><img src={pokemonData.pokemonSprite} alt={pokemonData.name}
+              style={{ width: '300px', height: '300px' }} /></p>
+            <p style={{ backgroundColor: pokemonData.pokemonTypes[0] === dailyPokemon.pokemonTypes[0] ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.pokemonTypes[0]}
+            </p>
+            <p style={{ backgroundColor: pokemonData.pokemonTypes[1] === dailyPokemon.pokemonTypes[1] ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.pokemonTypes[1] || 'Aucun'}
+            </p>
+            <p style={{ backgroundColor: pokemonData.pokemonHabitat === dailyPokemon.pokemonHabitat ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.pokemonHabitat}
+            </p>
+            <p style={{ backgroundColor: pokemonData.colors === dailyPokemon.colors ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.colors}
+            </p>
+            <p style={{ backgroundColor: pokemonData.evolutionStage === dailyPokemon.evolutionStage ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.evolutionStage}
+            </p>
+            <p style={{ backgroundColor: pokemonData.height === dailyPokemon.height ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.height * 10} cm
+            </p>
+            <p style={{ backgroundColor: pokemonData.weight === dailyPokemon.weight ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.weight / 10} kg
+            </p>
+            <p style={{ backgroundColor: pokemonData.generation === dailyPokemon.generation ? '#29E43C' : '#EB0F0F' }}>
+              {pokemonData.generation}
+            </p>
           </div>
         ))}
       </div>
@@ -191,7 +292,7 @@ function Test() {
         width="300"
         height="200"
       />
-      
+
       <div className='inputPokemonContainer'>
         <input className='inputPokemon'
           type="text"
@@ -201,7 +302,15 @@ function Test() {
           onKeyDown={handleInputKeyDown}
         />
       </div>
-      <div></div>
+      <div>
+        <button onClick={handleGenerateRandomPokemon}>Générer un Pokémon aléatoire</button>
+      </div>
+      <div className='dropDownListPokemon'>
+        {pokemonName.trim() !== '' && // Vérifie si la zone de texte n'est pas vide
+          Object.keys(pokemonNames).filter((name) => name.toLowerCase().startsWith(pokemonName.toLowerCase())).map((name, index) => (
+            <p key={index}>{name}</p>
+          ))}
+      </div>
     </div>
   );
 }
