@@ -27,10 +27,10 @@
     "raichu": "raichu",
     "sabelette": "sandshrew",
     "sablaireau": "sandslash",
-    "nidoran♀": "nidoran-f",
+    "nidoran-f": "nidoran-f",
     "nidorina": "nidorina",
     "nidoqueen": "nidoqueen",
-    "nidoran♂": "nidoran-m",
+    "nidoran-m": "nidoran-m",
     "nidorino": "nidorino",
     "nidoking": "nidoking",
     "mélofée": "clefairy",
@@ -383,6 +383,5 @@
     "kyogre": "kyogre",
     "groudon": "groudon",
     "rayquaza": "rayquaza",
-    "jirachi": "jirachi",
-    "deoxys": "deoxys"
+    "jirachi": "jirachi"
 }

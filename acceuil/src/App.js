@@ -1,4 +1,4 @@
-import Classic from './Composants/Dailys/Classic/test';
+import Classic from './Composants/Dailys/Classic/pokedex';
 {/*import BrowsingRoutes from './BrowsingRoutes';*/}
 
 function App() {

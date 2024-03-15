@@ -258,7 +258,7 @@ function Test() {
         {pokemonDataList.map((pokemonData, index) => (
           <div key={index} className="dynamic-div">
             <p><img src={pokemonData.pokemonSprite} alt={pokemonData.name}
-              style={{ width: '300px', height: '300px' }} /></p>
+              style={{ width: '200px', height: '200px' }} /></p>
             <p style={{ backgroundColor: pokemonData.pokemonTypes[0] === dailyPokemon.pokemonTypes[0] ? '#29E43C' : '#EB0F0F' }}>
               {pokemonData.pokemonTypes[0]}
             </p>
@@ -315,5 +315,4 @@ function Test() {
   );
 }
 
-export default Test;
-
+export default Test; 
