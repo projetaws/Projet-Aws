@@ -66,20 +66,6 @@ body {
   width: auto;
 }
 
-.pokemonItem {
-  display: flex; /* Utiliser la disposition flexbox pour aligner l'image et le nom */
-  align-items: center; /* Aligner les éléments verticalement */
-  background-color: yellow; /* Fond jaune */
-  padding: 5px; /* Espacement intérieur */
-  margin-bottom: 5px; /* Espacement entre les éléments */
-}
-
-.pokemonSprite {
-  width: 50px; /* Largeur de l'image */
-  height: 50px; /* Hauteur de l'image */
-  margin-right: 10px; /* Espacement entre l'image et le nom */
-}
-
 .dynamic-div {
   background-color: #FFCC01;
   border-radius: 20px; /* Ajoutez cette ligne pour arrondir les angles */

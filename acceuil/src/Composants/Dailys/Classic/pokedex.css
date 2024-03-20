@@ -1,28 +1,65 @@
+@font-face {
+    font-family: 'PKMN RBYGSC';
+    src: url('../../assets/fonts/PKMN\ RBYGSC.ttf') format('truetype');
+}
+
 body {
-    display: flex; /* Permet d'ordonner les éléments*/
-    justify-content: center; /* Centrer horizontalement */
-    align-items: center; /* Centrer verticalement */
-    height: 100vh; /* Remplir toute la hauteur de la fenêtre */
-    margin: 0; /* Supprimer les marges par défaut */
+    display: flex;
+    /* Permet d'ordonner les éléments*/
+    justify-content: center;
+    /* Centrer horizontalement */
+    align-items: center;
+    /* Centrer verticalement */
+    height: 100vh;
+    /* Remplir toute la hauteur de la fenêtre */
+    margin: 0;
+    /* Supprimer les marges par défaut */
+    background-image: url('../../assets/images/Allgenv2.png');
+    background-size: 100% 100%;
+}
+
+p {
+    font-family: 'PKMN RBYGSC';
 }
 
 .pokedexBg {
     background-color: #EF0D0D;
-    width: 1300px;
+    width: 1400px;
     height: 70vh;
     display: flex;
-    flex-direction: column; /* Les éléments fils seront alignés en colonne*/
+    flex-direction: column;
+    /* Les éléments fils seront alignés en colonne*/
     border-radius: 45px;
     position: relative;
-    overflow: auto;
+}
+.popup {
+    position: fixed; /* Utilisation de position: fixed pour qu'il reste à l'écran même en cas de défilement */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent pour un effet de superposition */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999; /* Assurez-vous que le pop-up apparaît au-dessus de tous les autres éléments */
 }
 
+.popupTop {
+    background-color: #0DADEF;
+    display: flex;
+    padding: 20px;
+    border-radius: 50px;
+    border: #ffffff 20px solid;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Ombre pour le pop-up */
+}
 .pokedexTop {
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
-    height: 15%;
+    height: 12%;
 }
 
 .returnButton {
@@ -59,15 +96,15 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 100%;
+    height: 90%;
 }
 
 .pokemonTab {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 65%;
-    height: 100%;
+    width: 70%;
+    height: 97.5%;
     margin-left: 1%;
 }
 
@@ -75,67 +112,155 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: space-between;
-    width: 30%;
+    width: 25%;
     height: 100%;
+    margin-right: 1%;
     gap: 3%;
 }
 
 .pokemonTabHeader {
     position: relative;
     display: flex;
-    align-items: center;
+    justify-content: center;
     width: 100%;
-    height: 10%; /* Augmentation de la hauteur pour inclure l'ombre */
+    height: 10%;
+    /* Augmentation de la hauteur pour inclure l'ombre */
     background-color: white;
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
     z-index: 1;
 }
+.headerText {
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0%;
+}
+.pokemonTabHeader p{
+    width: 11.1%;
+    text-align: center;
+    font-size: 13px;
+}
 
 .pokemonTabHeader::after {
     content: "";
     position: absolute;
-    bottom: -9%; /* Ajustez la position de l'ombre selon vos préférences */
+    bottom: -9%;
+    /* Ajustez la position de l'ombre selon vos préférences */
     left: 0.5%;
     width: 99%;
-    height: 4px; /* Hauteur de l'ombre */
-    background: rgba(0, 0, 0, 0.3); /* Couleur de l'ombre */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Ajout de l'ombre */
+    height: 4px;
+    /* Hauteur de l'ombre */
+    background: rgba(0, 0, 0, 0.3);
+    /* Couleur de l'ombre */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* Ajout de l'ombre */
 }
-
-
 .pokemonTabContainer {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 80%;
+    height: 480px;
     background-color: #0DADEF;
     border-left: solid white 3px;
     border-right: solid white 3px;
+    overflow-y: auto;
+}
+
+.dynamic-div {
+    background-color: #FFCC01;
+    height: 20%;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: 2%;
+}
+
+.dynamic-div p {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    height: 70%;
+    width: 9.1%;
+    border-radius: 10px;
+    margin: 1%;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    /* Taille de police relative */
+    /* Espacement entre les éléments */
+}
+
+.sprite {
+    width: 105%;
+    height: 105%;
 }
 
 .pokemonTabFooter {
     position: relative;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 8%;
+    height: 10%;
     background-color: white;
     border-bottom-left-radius: 32px;
     border-bottom-right-radius: 32px;
+}
+.details {
+    position: relative;
+    width: 10%;
+    height: 90%;
+    right: 1%;
+}
+.detailsButton {
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+}
+.details img {
+    background-image: url('../../assets/images/pokedexButton.png');
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+.redPoint {
+    position: relative;
+    background-color: red;
+    height: 70%;
+    width: 4%;   
+    border-radius: 100px;
+    border: #000000 2px solid;
+    left: 1%;
 }
 
 .pokemonTabFooter::after {
     content: "";
     position: absolute;
-    bottom: 100%; /* Ajustez la position de l'ombre selon vos préférences */
+    bottom: 100%;
+    /* Ajustez la position de l'ombre selon vos préférences */
     left: 0.5%;
     width: 99%;
-    height: 4px; /* Hauteur de l'ombre */
-    background: rgba(0, 0, 0, 0.3); /* Couleur de l'ombre */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Ajout de l'ombre */
+    height: 4px;
+    /* Hauteur de l'ombre */
+    background: rgba(0, 0, 0, 0.3);
+    /* Couleur de l'ombre */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* Ajout de l'ombre */
+}
+
+.inputPokemon {
+    border-image: url('../../assets/images/frame-input-hd.png') 42 round;
+    border-width: 10px;
+    height: 55%;
 }
 
 .spaceBar {
@@ -148,27 +273,136 @@ body {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 80%;
+    align-items: center;
+    width: 70%;
     height: 55%;
     background-color: #0DADEF;
     border-radius: 50px;
     border: solid white 14px;
+    text-align: center;
+}
+
+.rules {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ruleComponent p {
+    width: 80%;
+    font-size: 0.8em;
+}
+
+.hints {
+    display: flex;
+    justify-content: space-between;
+}
+
+.hints button {
+    background: none;
+    border: none;
+}
+
+.hints button:hover img {
+    transform: scale(1.2); /* Agrandir l'image de 20% lorsqu'elle est survolée */
+  }
+
+.hintText {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 15%;
+}
+.hintText p {
+    font-family: white;
 }
 
 .pokemonDropDownList {
     position: relative;
     display: flex;
-    width: 80%;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
     height: 30%;
     background-color: #0DADEF;
     border-radius: 50px;
     border: solid white 14px;
     margin-bottom: 4%;
+    overflow-y: auto;
 }
+
+.pokemonDropDownList p {
+    background-color: #FFCC01;
+    /* Fond blanc */
+    border: 2px solid #000000;
+    /* Bordure noire */
+    color: #000000;
+    /* Couleur du texte */
+    text-align: center;
+    border-radius: 10px;
+    height: auto;
+    width: 80%;
+}
+
 
 @media screen and (max-width : 1470px) {
     .pokedexBg {
-        width: 700px;
+        width: 1024px;
     }
 }
 
+@media screen and (max-width : 1024px) {
+    .pokedexBg {
+        width: 80vw;
+    }
+}
+
+@media screen and (max-width : 770px) {
+    .pokedexBg {
+        width: 600px;
+        height: 700px;
+    }
+
+    .mainContainer {
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2%;
+    }
+
+    .pokemonTab {
+        width: 95%;
+        height: 55%;
+        margin-left: 0%;
+    }
+
+    .pokedexTop {
+        height: 8%;
+    }
+
+    .spaceBar {
+        height: 1%;
+        width: 85%;
+    }
+
+    .sideComponent {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 40%;
+        gap: 5%;
+        margin-bottom: 2%;
+    }
+
+    .ruleComponent {
+        width: 40%;
+        height: 80%;
+    }
+
+    .pokemonDropDownList {
+        width: 40%;
+        height: 80%;
+        margin-bottom: 0%;
+    }
+}
