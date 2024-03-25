@@ -3,26 +3,19 @@ import axios from 'axios';
 import pokemonNames from '../../assets/datas/FR_EN_PokeDict.json';
 import './pokedex.css';
 import talentHint from '../../assets/images/talentPill.svg';
-import genHint from '../../assets/images/genHint.svg';
+import habitatHint from '../../assets/images/habitatHint.png';
 import detailButton from '../../assets/images/pokedexButton.png'
+import redPoint from '../../assets/images/redPoint.svg';
+import greenPoint from '../../assets/images/greenPoint.svg';
 
 function Pokedex() {
     const [pokemonName, setPokemonName] = useState('');
     const [pokemonDataList, setPokemonDataList] = useState([]);
     const [dailyPokemon, setDailyPokemon] = useState(null);
-    const [comparisonResults, setComparisonResults] = useState({
-        isEqualName: false,
-        isEqualType1: false,
-        isEqualType2: false,
-        isEqualHabitat: false,
-        isEqualColors: false,
-        isEqualEvolutionStage: false,
-        isEqualHeight: false,
-        isEqualWeight: false,
-        isEqualGeneration: false,
-    });
     const [attemptCounter, setAttemptCounter] = useState(0);
-    const [showPopup, setShowPopup] = useState(false); // État pour gérer la visibilité du pop-up
+    const [showColorAnswerPopup, setShowColorAnswerPopup] = useState(false); // État pour gérer la visibilité du pop-up
+	const [pokemonFound, setPokemonFound] = useState(false); // Nouvel état pour suivre si le Pokémon du jour a été trouvé
+
 
     useEffect(() => {
         // Fonction pour générer automatiquement le Pokémon quotidien à minuit
@@ -48,17 +41,17 @@ function Pokedex() {
             document.getElementById('talentHintId').style.opacity = 1;
         }
         if (attemptCounter >= 8) {
-            document.getElementById('genHintId').style.opacity = 1;
+            document.getElementById('habitatHintId').style.opacity = 1;
         }
     }, [attemptCounter]);
 
     const openPopup = () => {
-        setShowPopup(true);
+        setShowColorAnswerPopup(true);
     };
 
     // Fonction pour fermer le pop-up
     const closePopup = () => {
-        setShowPopup(false);
+        setShowColorAnswerPopup(false);
     };
 
     const getRandomPokemon = async () => {
@@ -237,7 +230,7 @@ function Pokedex() {
     }
 
     const handleInputSubmit = async () => {
-        if (pokemonName.trim() !== '') {
+        if (pokemonName.trim() !== ''  && !pokemonFound) {
             try {
 
                 setAttemptCounter(attemptCounter + 1);
@@ -247,36 +240,15 @@ function Pokedex() {
                 // Récupérer le pokémon saisi par l'utilisateur
                 const userPokemonData = await getPokemon(pokemonEnglishName);
 
-                // Comparaison des informations
-                const isEqualName = userPokemonData.name.toLowerCase() === dailyPokemon.name.toLowerCase();
-                const isEqualType1 = userPokemonData.pokemonTypes[0] === dailyPokemon.pokemonTypes[0];
-                const isEqualType2 = (userPokemonData.pokemonTypes[1] || 'Aucun') === (dailyPokemon.pokemonTypes[1] || 'Aucun');
-                const isEqualHabitat = userPokemonData.pokemonHabitat === dailyPokemon.pokemonHabitat;
-                const isEqualColors = userPokemonData.colors === dailyPokemon.colors;
-                const isEqualEvolutionStage = userPokemonData.evolutionStage === dailyPokemon.evolutionStage;
-                const isEqualHeight = userPokemonData.height === dailyPokemon.height;
-                const isEqualWeight = userPokemonData.weight === dailyPokemon.weight;
-                const isEqualGeneration = userPokemonData.generation === dailyPokemon.generation;
-
-                // Mise à jour de l'état avec les résultats de la comparaison
-                setComparisonResults({
-                    isEqualName,
-                    isEqualType1,
-                    isEqualType2,
-                    isEqualHabitat,
-                    isEqualColors,
-                    isEqualEvolutionStage,
-                    isEqualHeight,
-                    isEqualWeight,
-                    isEqualGeneration,
-                });
-
-
                 // Créez une nouvelle copie du tableau avec le nouvel élément au début
                 const updatedList = [userPokemonData, ...pokemonDataList];
 
                 // Mettez à jour l'état avec la nouvelle copie du tableau
                 setPokemonDataList(updatedList);
+
+				if (pokemonEnglishName.toLowerCase() === dailyPokemon.name.toLowerCase()) {
+                    setPokemonFound(true); // Marquez le Pokémon comme trouvé
+                }
 
                 setPokemonName('');
             } catch (error) {
@@ -299,8 +271,7 @@ function Pokedex() {
                         <div className='headerText'>
                             <p>Pokemon</p>
                             <p>Type 1</p>
-                            <p>Type 2</p>
-                            <p>Habitat</p>
+                            <p>Type 2</p> z
                             <p>Couleur</p>
                             <p>Stade d'evolution</p>
                             <p>Taille</p>
@@ -347,10 +318,11 @@ function Pokedex() {
                             value={pokemonName}
                             onChange={handleInputChange}
                             onKeyDown={handleInputKeyDown}
+							disabled={pokemonFound} // Désactiver l'entrée si le Pokémon est trouvé
                         />
                         <div className='details'>
                             <button className='detailsButton' onClick={openPopup}>
-                                <img src={detailButton} alt="detail"/>
+                                <img src={detailButton} alt="detail" />
                             </button>
                         </div>
                     </div>
@@ -364,10 +336,10 @@ function Pokedex() {
                         </div>
                         <div className='hints'>
                             <button>
-                                <img id="talentHintId" src={talentHint} alt="talentHint" style={{ opacity: 0.5 }} />
+                                <img id="talentHintId" src={talentHint} alt="talentHint" style={{ opacity: 0.5, width: 75 }} />
                             </button>
                             <button>
-                                <img id='genHintId' src={genHint} alt="talentHint" style={{ opacity: 0.5 }} />
+                                <img id='habitatHintId' src={habitatHint} alt="talentHint" style={{ opacity: 0.5, width: 75}} />
                             </button>
                         </div>
                         <div className='hintText'>
@@ -385,26 +357,30 @@ function Pokedex() {
 
                     <div>
                         <div>
-                        
+
                         </div>
                     </div>
                 </div>
             </div>
             {/* Popup */}
-            {showPopup && (
+            {showColorAnswerPopup && (
                 <div className="popup">
-                    <div className="popupTop">
-                        <h2>Code couleur</h2>
-                        <button onClick={closePopup}>Fermer</button>
-                    </div>
-                    <div className='popupBottom'>
-                        <div className='correctAnwser'>
-                            <div className=''></div>
-                            <div></div>
+                    <div className='popupContent'>
+                        <div className="popupPlacement">
+                            <h2>Code couleur</h2>
+                            <button
+                                className='detailCloseButton'
+                                onClick={closePopup}>X</button>
                         </div>
-                        <div className='wrongAnswer'>
-                            <div></div>
-                            <div></div>
+                        <div className='popupPlacement'>
+                            <div className='anwser'>
+                                <img src={greenPoint} alt="Round vert significatif d'une réponse correct" />
+                                <p>Correct</p>
+                            </div>
+                            <div className='anwser'>
+                                <img src={redPoint} alt="Round rouge significatif d'une réponse incorrect" />
+                                <p>Incorrect</p>
+                            </div>
                         </div>
                     </div>
                 </div>

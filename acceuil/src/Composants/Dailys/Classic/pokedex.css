@@ -45,15 +45,48 @@ p {
     flex-direction: column;
     z-index: 9999; /* Assurez-vous que le pop-up apparaît au-dessus de tous les autres éléments */
 }
-
-.popupTop {
-    background-color: #0DADEF;
-    display: flex;
-    padding: 20px;
-    border-radius: 50px;
-    border: #ffffff 20px solid;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Ombre pour le pop-up */
+.detailCloseButton {
+    background: none;
+    border: none;
+    font-family: 'PKMN RBYGSC';
+    font-size: 20px;
+    color: #ffffff; 
+    text-shadow: 0 0 5px black;
 }
+
+.popupContent {
+    width: 300px;
+    height: 200px;
+    display: flex;
+    background-color: #0DADEF;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: #FFCC01 solid 20px;
+    border-radius: 50px;
+}
+
+.popupPlacement {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-family: 'PKMN RBYGSC';
+    color: #ffffff; 
+    text-shadow: 0 0 5px black;
+}
+
+.anwser {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.anwser img {
+    width: 50px;
+    height: 50px;
+}
+
 .pokedexTop {
     position: relative;
     display: flex;
@@ -201,6 +234,7 @@ p {
 .sprite {
     width: 105%;
     height: 105%;
+    filter: brightness(0)  
 }
 
 .pokemonTabFooter {
@@ -304,9 +338,12 @@ p {
     border: none;
 }
 
+#habitatHintId {
+    filter: brightness(0);
+}
 .hints button:hover img {
     transform: scale(1.2); /* Agrandir l'image de 20% lorsqu'elle est survolée */
-  }
+}
 
 .hintText {
     display: flex;
