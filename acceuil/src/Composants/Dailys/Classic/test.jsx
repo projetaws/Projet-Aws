@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './classic.css';
 import pokemonNames from '../../assets/datas/FR_EN_PokeDict.json';
-import pokedexraw from '../../assets/RawPokedex.svg';
+import pokezapTitle from '../../assets/images/pokezap.png'
+import abilityIcon from '../../assets/images/talentPill.svg'
+import habitatIcon from '../../assets/images/habitatHint.png'
 
 function Test() {
   const [pokemonName, setPokemonName] = useState('');
@@ -253,63 +255,50 @@ function Test() {
   };
 
   return (
-    <div className="classic-container">
-      <div className='div-container'>
-        {pokemonDataList.map((pokemonData, index) => (
-          <div key={index} className="dynamic-div">
-            <p><img src={pokemonData.pokemonSprite} alt={pokemonData.name}
-              style={{ width: '200px', height: '200px' }} /></p>
-            <p style={{ backgroundColor: pokemonData.pokemonTypes[0] === dailyPokemon.pokemonTypes[0] ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.pokemonTypes[0]}
-            </p>
-            <p style={{ backgroundColor: pokemonData.pokemonTypes[1] === dailyPokemon.pokemonTypes[1] ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.pokemonTypes[1] || 'Aucun'}
-            </p>
-            <p style={{ backgroundColor: pokemonData.pokemonHabitat === dailyPokemon.pokemonHabitat ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.pokemonHabitat}
-            </p>
-            <p style={{ backgroundColor: pokemonData.colors === dailyPokemon.colors ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.colors}
-            </p>
-            <p style={{ backgroundColor: pokemonData.evolutionStage === dailyPokemon.evolutionStage ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.evolutionStage}
-            </p>
-            <p style={{ backgroundColor: pokemonData.height === dailyPokemon.height ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.height * 10} cm
-            </p>
-            <p style={{ backgroundColor: pokemonData.weight === dailyPokemon.weight ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.weight / 10} kg
-            </p>
-            <p style={{ backgroundColor: pokemonData.generation === dailyPokemon.generation ? '#29E43C' : '#EB0F0F' }}>
-              {pokemonData.generation}
-            </p>
+    <div className='gameScreen'>
+      <div className="headerContainer">
+        <img src={pokezapTitle} alt="Pokezap" />
+      </div>
+      <div className='mainContainer'>
+        <div className='gameContainer'>
+          <div className='rulesFrame'>
+            <div className='rulesContainer'>
+              <div className='generationIndicator'>
+                <span>Generation : 1-3</span>
+              </div>
+              <div>
+                <span>Devine le Pokemon du jour !</span>
+              </div>
+              <div className='hintsContainer'>
+                <div className='hint'>
+                  <div>
+                    <img src={abilityIcon} alt="Talent du Pokemon" style={{ opacity: 0.5, width: 75 }} />
+                  </div>
+                  <div>
+                    <span> Indice : Talent</span>
+                  </div>
+                </div>
+                <div className='hint'>
+                  <div>
+                    <img src={habitatIcon} alt="Localisation du Pokemon" style={{ opacity: 0.5, width: 75 }} />
+                  </div>
+                  <div>
+                    <span> Indice : Habitat</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-      <img
-        src={pokedexraw}
-        alt="pokedex"
-        width="300"
-        height="200"
-      />
+          <div className='answer'>
+            <div className='userInput'>
+              <input
+                type="text"
+                placeholder="Nom du Pokémon"
+              />
+            </div>
+          </div>
+        </div>
 
-      <div className='inputPokemonContainer'>
-        <input className='inputPokemon'
-          type="text"
-          placeholder="Nom du Pokémon"
-          value={pokemonName}
-          onChange={handleInputChange}
-          onKeyDown={handleInputKeyDown}
-        />
-      </div>
-      <div>
-        <button onClick={handleGenerateRandomPokemon}>Générer un Pokémon aléatoire</button>
-      </div>
-      <div className='dropDownListPokemon'>
-        {pokemonName.trim() !== '' && // Vérifie si la zone de texte n'est pas vide
-          Object.keys(pokemonNames).filter((name) => name.toLowerCase().startsWith(pokemonName.toLowerCase())).map((name, index) => (
-            <p key={index}>{name}</p>
-          ))}
       </div>
     </div>
   );

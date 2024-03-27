@@ -15,7 +15,8 @@ function Pokedex() {
     const [attemptCounter, setAttemptCounter] = useState(0);
     const [showColorAnswerPopup, setShowColorAnswerPopup] = useState(false); // État pour gérer la visibilité du pop-up
     const [showTalentHintPopup, setshowTalentHintPopup] = useState(false); // Etat pout gérer la visibilité du pop-up de l'indice du talent
-	const [pokemonFound, setPokemonFound] = useState(false); // Nouvel état pour suivre si le Pokémon du jour a été trouvé
+    const [showHabitatHintPopup, setshowHabitatHintPopup] = useState(false);
+    const [pokemonFound, setPokemonFound] = useState(false); // Nouvel état pour suivre si le Pokémon du jour a été trouvé
 
 
     useEffect(() => {
@@ -56,12 +57,21 @@ function Pokedex() {
     };
 
     const openTalentHintPopup = () => {
-        setShowColorAnswerPopup(true);
+        setshowTalentHintPopup(true);
     };
 
     // Fonction pour fermer le pop-up
     const closeTalentHintPopup = () => {
-        setShowColorAnswerPopup(false);
+        setshowTalentHintPopup(false);
+    };
+
+    const openHabitatHintPopup = () => {
+        setshowHabitatHintPopup(true);
+    };
+
+    // Fonction pour fermer le pop-up
+    const closeHabitatHintPopup = () => {
+        setshowHabitatHintPopup(false);
     };
 
     const getRandomPokemon = async () => {
@@ -200,6 +210,22 @@ function Pokedex() {
         return pokemonDetails.data.id;
     }
 
+    const getPokemonAbility = async (pokemonDetails) => {
+        try {
+            const abilities = pokemonDetails.data.abilities;
+            const abilityNames = await Promise.all(abilities.map(async (ability) => {
+                const abilityResponse = await axios.get(ability.ability.url);
+                const abilityNameFr = abilityResponse.data.names.find(name => name.language.name === 'fr').name;
+                return abilityNameFr;
+            }));
+            return abilityNames;
+        } catch (error) {
+            console.error('Erreur lors de la récupération des capacités Pokémon :', error.message);
+            return [];
+        }
+    };
+
+
     const getPokemon = async (pokemonName) => {
 
         // Récupération des informations général du pokémon (cf. doc PokeAPI)
@@ -219,6 +245,7 @@ function Pokedex() {
         const weight = getPokemonWeight(pokemonDetails);
         const pokemonId = getPokemonId(pokemonDetails);
         const generation = getGenerationByPokemonId(pokemonId);
+        const talent = await getPokemonAbility(pokemonDetails);
         const newPokemonData = {
             name: pokemonName,
             pokemonSprite: pokemonSprite,
@@ -229,13 +256,14 @@ function Pokedex() {
             weight: weight,
             evolutionStage: evolutionStage,
             generation: generation,
+            talent: talent,
         };
-
+        console.log(newPokemonData.talent);
         return newPokemonData;
     }
 
     const handleInputSubmit = async () => {
-        if (pokemonName.trim() !== ''  && !pokemonFound) {
+        if (pokemonName.trim() !== '' && !pokemonFound) {
             try {
 
                 setAttemptCounter(attemptCounter + 1);
@@ -251,7 +279,7 @@ function Pokedex() {
                 // Mettez à jour l'état avec la nouvelle copie du tableau
                 setPokemonDataList(updatedList);
 
-				if (pokemonEnglishName.toLowerCase() === dailyPokemon.name.toLowerCase()) {
+                if (pokemonEnglishName.toLowerCase() === dailyPokemon.name.toLowerCase()) {
                     setPokemonFound(true); // Marquez le Pokémon comme trouvé
                 }
 
@@ -274,14 +302,27 @@ function Pokedex() {
                 <div className='pokemonTab'>
                     <div className='pokemonTabHeader'>
                         <div className='headerText'>
-                            <p>Pokemon</p>
-                            <p>Type 1</p>
-                            <p>Type 2</p> 
-                            <p>Couleur</p>
-                            <p>Stade d'evolution</p>
-                            <p>Taille</p>
-                            <p>Poids</p>
-                            <p>Generation</p>
+                            <div>
+                                <p>Pokemon</p>
+                            </div>
+                            <div>
+                                <p>Type 1</p>
+                            </div>
+                            <div>
+                                <p>Type 2</p>
+                            </div>
+                            <div>
+                                <p>Stade d'evolution</p>
+                            </div>
+                            <div>
+                                <p>Taille</p>
+                            </div>
+                            <div>
+                                <p>Poids</p>
+                            </div>
+                            <div>
+                                <p>Generation</p>
+                            </div>
                         </div>
                     </div>
                     <div className='pokemonTabContainer'>
@@ -323,7 +364,7 @@ function Pokedex() {
                             value={pokemonName}
                             onChange={handleInputChange}
                             onKeyDown={handleInputKeyDown}
-							disabled={pokemonFound} // Désactiver l'entrée si le Pokémon est trouvé
+                            disabled={pokemonFound} // Désactiver l'entrée si le Pokémon est trouvé
                         />
                         <div className='details'>
                             <button className='detailsButton' onClick={openColorAnswerPopup}>
@@ -340,20 +381,18 @@ function Pokedex() {
                             <p>Mettez a l'epreuve votre connaissance des pokémons et devoilez le mystère qui se cache derriere cette enigme..</p>
                         </div>
                         <div className='hints'>
-                            <button onClick={setshowTalentHintPopup}>
-                                <img id="talentHintId" 
-                                     src={talentHint} 
-                                     alt="talentHint" 
-                                     style={{ opacity: 0.5, width: 75 }} 
-                                />   
+                            <button onClick={openTalentHintPopup} disabled = {attemptCounter<5}>
+                                <img id="talentHintId"
+                                    src={talentHint}
+                                    alt="talentHint"
+                                    style={{ opacity: 0.5, width: 75 }}
+                                />
                             </button>
-                            <button>
-                                <img id='habitatHintId' src={habitatHint} alt="talentHint" style={{ opacity: 0.5, width: 75}} />
+                            <button 
+                                onClick={openHabitatHintPopup}
+                                disabled = {attemptCounter<8}>
+                                <img id='habitatHintId' src={habitatHint} alt="talentHint" style={{ opacity: 0.5, width: 75 }} />
                             </button>
-                        </div>
-                        <div className='hintText'>
-                            <p>Talent</p>
-                            <p>Géneration</p>
                         </div>
                     </div>
                     <div className='pokemonDropDownList'>
@@ -371,6 +410,43 @@ function Pokedex() {
                     </div>
                 </div>
             </div>
+
+            {showHabitatHintPopup && (
+                <div className='popup'>
+                    <div className='popupContent'>
+                        <div className='popupPlacement'>
+                            <p>Habitat du Pokemon :</p>
+                            <button 
+                                className='detailCloseButton'
+                                onClick={closeHabitatHintPopup}>X
+                            </button>
+                        </div>
+                        <div className='popupPlacement'>
+                            <p>{dailyPokemon.pokemonHabitat}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showTalentHintPopup && (
+                <div className='popup'>
+                    <div className='popupContent'>
+                        <div className='popupPlacement'>
+                            <p>Talents du Pokemon :</p>
+                            <button 
+                                className='detailCloseButton'
+                                onClick={closeTalentHintPopup}>X
+                            </button>
+                        </div>
+                        <div className='popupPlacement'>
+                            {dailyPokemon.talent.map((ability, index) => (
+                                <p key={index}>{ability}</p>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Popup */}
             {showColorAnswerPopup && (
                 <div className="popup">
@@ -379,7 +455,8 @@ function Pokedex() {
                             <h2>Code couleur</h2>
                             <button
                                 className='detailCloseButton'
-                                onClick={closeColorAnswerPopup}>X</button>
+                                onClick={closeColorAnswerPopup}>X
+                            </button>
                         </div>
                         <div className='popupPlacement'>
                             <div className='anwser'>

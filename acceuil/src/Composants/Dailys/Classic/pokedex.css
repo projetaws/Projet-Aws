@@ -66,6 +66,10 @@ p {
     border-radius: 50px;
 }
 
+.popupContent p {
+    text-align: center;
+}
+
 .popupPlacement {
     display: flex;
     justify-content: center;
@@ -73,6 +77,7 @@ p {
     font-family: 'PKMN RBYGSC';
     color: #ffffff; 
     text-shadow: 0 0 5px black;
+    flex-wrap: wrap;
 }
 
 .anwser {
@@ -166,12 +171,13 @@ p {
     z-index: 1;
 }
 .headerText {
-    width: 95%;
-    display: flex;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(8,1rem);
     justify-content: center;
     align-items: center;
     justify-content: space-between;
-    gap: 0%;
+    margin: 2%;
 }
 .pokemonTabHeader p{
     width: 11.1%;
@@ -234,7 +240,7 @@ p {
 .sprite {
     width: 105%;
     height: 105%;
-    filter: brightness(0)  
+    
 }
 
 .pokemonTabFooter {
